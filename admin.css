@@ -41,6 +41,7 @@
 .admin-service-form input, .admin-service-form select, .admin-service-form textarea { width: 100%; padding: 7px 8px; border: 1px solid #dfe7f3; border-radius: 8px; color: #34445d; background: white; font: inherit; }
 .admin-service-form textarea { min-height: 60px; resize: vertical; }
 .admin-service-form summary { color: #315eb7; cursor: pointer; font-size: 11px; font-weight: 700; }
+.admin-service-warning { color: #9a5b17; font-size: 10px; line-height: 1.5; }
 .admin-footnote { color: #8290a6; font-size: 11px; line-height: 1.7; }
 @media (max-width: 700px) {
   .admin-header { min-height: 66px; padding-inline: 16px; }

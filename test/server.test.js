@@ -5,6 +5,12 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import request from "supertest";
+import {
+  decryptAccessData,
+  encryptAccessData,
+  loadAccessDataKeyring,
+  migrateAccessDataRows,
+} from "../access-data.js";
 
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "ruangdigital-test-"));
 process.env.NODE_ENV = "test";
@@ -14,6 +20,8 @@ process.env.PUBLIC_BASE_URL = "http://localhost:8000";
 process.env.ADMIN_EMAIL = "admin@example.com";
 process.env.ADMIN_PASSWORD = "test-admin-password-123";
 process.env.BACKUP_DIR = path.join(tempDir, "backups");
+process.env.ACCESS_DATA_KEY_VERSION = "v1";
+process.env.ACCESS_DATA_KEY = crypto.randomBytes(32).toString("base64");
 delete process.env.MIDTRANS_SERVER_KEY;
 delete process.env.SMTP_HOST;
 delete process.env.SMTP_USER;
@@ -69,6 +77,41 @@ test("health and package catalog are available", async () => {
   const catalog = await request(app).get("/api/catalog");
   assert.equal(catalog.status, 200);
   assert.deepEqual(catalog.body.packages.map((item) => item.id), ["hosting-basic", "hosting-pro", "vps-cloud"]);
+});
+
+test("service access data is authenticated, encrypted, and supports key rotation", () => {
+  const firstKey = process.env.ACCESS_DATA_KEY;
+  const firstKeyring = loadAccessDataKeyring(process.env, true);
+  const value = { host: "private.example.test", username: "customer", notes: "safe note" };
+  const envelope = encryptAccessData(value, firstKeyring);
+  assert.match(envelope, /^rd-access:1:v1:/);
+  assert.equal(envelope.includes(value.host), false);
+  assert.deepEqual(decryptAccessData(envelope, firstKeyring), value);
+
+  const parts = envelope.split(":");
+  const tamperedTag = Buffer.from(parts[4], "base64");
+  tamperedTag[0] ^= 1;
+  parts[4] = tamperedTag.toString("base64");
+  assert.throws(() => decryptAccessData(parts.join(":"), firstKeyring), /authenticated/i);
+
+  const wrongKeyring = loadAccessDataKeyring({
+    ACCESS_DATA_KEY_VERSION: "v1",
+    ACCESS_DATA_KEY: crypto.randomBytes(32).toString("base64"),
+  }, true);
+  assert.throws(() => decryptAccessData(envelope, wrongKeyring), /authenticated/i);
+  assert.throws(() => loadAccessDataKeyring({}, true), /ACCESS_DATA_KEY/);
+  assert.throws(() => loadAccessDataKeyring({
+    ACCESS_DATA_KEY_VERSION: "v1",
+    ACCESS_DATA_KEY: Buffer.alloc(16).toString("base64"),
+  }, true), /32-byte/);
+
+  const rotatedKeyring = loadAccessDataKeyring({
+    ACCESS_DATA_KEY_VERSION: "v2",
+    ACCESS_DATA_KEY: crypto.randomBytes(32).toString("base64"),
+    ACCESS_DATA_KEY_V1: firstKey,
+  }, true);
+  assert.deepEqual(decryptAccessData(envelope, rotatedKeyring), value);
+  assert.match(encryptAccessData(value, rotatedKeyring), /^rd-access:1:v2:/);
 });
 
 test("registration creates a hashed account and a persistent login session", async () => {
@@ -359,6 +402,10 @@ test("customers can only download their own PDF invoices and admin backups are r
   assert.ok(audit.every((event) => event.actor_user_id === db.prepare("SELECT id FROM users WHERE email = ?").get(process.env.ADMIN_EMAIL).id));
   assert.equal((await admin.get(`/api/admin/orders/${activationOrderId}/history`)).body.events.length, 3);
   assert.equal((await customer.get(`/api/admin/orders/${activationOrderId}/history`)).status, 403);
+  const encryptedDetails = db.prepare("SELECT service_details FROM orders WHERE id = ?").get(activationOrderId).service_details;
+  assert.match(encryptedDetails, /^rd-access:1:v1:/);
+  assert.equal(encryptedDetails.includes(activationPayload.host), false);
+  assert.deepEqual(decryptAccessData(encryptedDetails, loadAccessDataKeyring(process.env, true)), customerOrder.serviceDetails);
 
   const otherCustomer = request.agent(app);
   const otherEmail = "other@example.com";
@@ -379,6 +426,31 @@ test("customers can only download their own PDF invoices and admin backups are r
   assert.equal((await otherCustomer.get(`/api/orders/${orderId}/invoice.pdf`)).status, 404);
   assert.equal((await otherCustomer.get(`/api/orders/${activationOrderId}`)).status, 404);
   assert.ok(otherUserId);
+
+  const legacyOrderId = `RD-${crypto.randomUUID()}`;
+  const legacyDetails = { serviceType: "vps", host: "legacy.example.test", username: "legacy", port: 22, notes: "", startedAt: "2026-11-14" };
+  db.prepare(`
+    INSERT INTO orders (id, user_id, package_id, package_name, amount, payment_status,
+      service_status, service_details, invoice_number, created_at, updated_at)
+    VALUES (?, ?, 'vps-cloud', 'VPS Cloud', 180000, 'paid', 'active', ?, ?, ?, ?)
+  `).run(legacyOrderId, userId, JSON.stringify(legacyDetails), `INV-2026-${crypto.randomUUID().slice(0, 10).toUpperCase()}`, timestamp, timestamp);
+  const rotatedKeyring = loadAccessDataKeyring({
+    ACCESS_DATA_KEY_VERSION: "v2",
+    ACCESS_DATA_KEY: crypto.randomBytes(32).toString("base64"),
+    ACCESS_DATA_KEY_V1: process.env.ACCESS_DATA_KEY,
+  }, true);
+  assert.equal(migrateAccessDataRows(db, rotatedKeyring), 2);
+  const migratedRows = db.prepare("SELECT id, service_details FROM orders WHERE id IN (?, ?) ORDER BY id")
+    .all(activationOrderId, legacyOrderId);
+  assert.ok(migratedRows.every((row) => row.service_details.startsWith("rd-access:1:v2:")));
+  assert.deepEqual(decryptAccessData(
+    migratedRows.find((row) => row.id === legacyOrderId).service_details,
+    rotatedKeyring,
+  ), legacyDetails);
+  assert.deepEqual(decryptAccessData(
+    migratedRows.find((row) => row.id === activationOrderId).service_details,
+    rotatedKeyring,
+  ), customerOrder.serviceDetails);
 
   const backupResponse = await mutate(admin, "post", "/api/admin/backups", {});
   assert.equal(backupResponse.status, 201);

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test"
+    "test": "node --test",
+    "migrate:access-data": "node scripts/migrate-access-data.js"
   },
   "engines": {
     "node": ">=20"

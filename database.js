@@ -3,9 +3,14 @@ import path from "node:path";
 import Database from "better-sqlite3";
 
 export const databasePath = path.resolve(process.env.DB_PATH || ".data/ruangdigital.sqlite");
-fs.mkdirSync(path.dirname(databasePath), { recursive: true });
+const databaseDirectory = path.dirname(databasePath);
+fs.mkdirSync(databaseDirectory, { recursive: true, mode: 0o700 });
+if (databaseDirectory === path.resolve(".data")) {
+  fs.chmodSync(databaseDirectory, 0o700);
+}
 
 export const db = new Database(databasePath);
+fs.chmodSync(databasePath, 0o600);
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 db.pragma("busy_timeout = 5000");

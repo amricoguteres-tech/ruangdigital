@@ -11,12 +11,14 @@ import session from "express-session";
 import helmet from "helmet";
 import nodemailer from "nodemailer";
 import { z } from "zod";
+import { decryptAccessData, encryptAccessData, loadAccessDataKeyring } from "./access-data.js";
 import { closeDatabase, databasePath, db } from "./database.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
 const sessionSecret = process.env.SESSION_SECRET || "local-development-session-secret-change-me";
 const publicBaseUrl = process.env.PUBLIC_BASE_URL || "http://localhost:8000";
+const accessDataKeyring = loadAccessDataKeyring(process.env, isProduction);
 const sessionLifetime = 8 * 60 * 60 * 1000;
 const rememberLifetime = 30 * 24 * 60 * 60 * 1000;
 const app = express();
@@ -788,7 +790,7 @@ app.get("/api/orders", requireAuth, (req, res) => {
       ...order,
       serviceStatus,
       serviceDetails: ["active", "completed", "expired"].includes(serviceStatus) && storedServiceDetails
-        ? JSON.parse(storedServiceDetails)
+        ? decryptAccessData(storedServiceDetails, accessDataKeyring)
         : null,
     })),
   });
@@ -807,7 +809,7 @@ app.get("/api/orders/:id", requireAuth, (req, res) => {
     order: {
       ...publicOrder,
       serviceDetails: ["active", "completed", "expired"].includes(order.serviceStatus) && storedServiceDetails
-        ? JSON.parse(storedServiceDetails)
+        ? decryptAccessData(storedServiceDetails, accessDataKeyring)
         : null,
     },
   });
@@ -1009,6 +1011,9 @@ app.patch("/api/admin/orders/:id/service", requireAdmin, (req, res, next) => {
   let accessDetails;
   let expiresAt = null;
   if (nextStatus === "active") {
+    if (!accessDataKeyring.activeVersion) {
+      return res.status(503).json({ error: "Enkripsi detail akses belum dikonfigurasi." });
+    }
     const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((value) => {
       const date = new Date(`${value}T00:00:00.000Z`);
       return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
@@ -1070,7 +1075,7 @@ app.patch("/api/admin/orders/:id/service", requireAdmin, (req, res, next) => {
         WHERE id = ? AND payment_status = 'paid' AND service_status = ?
       `).run(
         nextStatus,
-        accessDetails ? JSON.stringify(accessDetails) : null,
+        accessDetails ? encryptAccessData(accessDetails, accessDataKeyring) : null,
         expiresAt,
         now,
         order.id,

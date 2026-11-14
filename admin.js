@@ -239,7 +239,10 @@ function serviceActivationForm(order) {
   notes.name = "notes";
   notes.maxLength = 2000;
   notesLabel.append(notes);
-  form.append(notesLabel);
+  const warning = document.createElement("small");
+  warning.className = "admin-service-warning";
+  warning.textContent = "Jangan masukkan kata sandi, token, atau kunci pribadi. Berikan kredensial secara terpisah melalui kanal aman.";
+  form.append(notesLabel, warning);
   const submit = document.createElement("button");
   submit.type = "submit";
   submit.className = "button button-small button-dark";
