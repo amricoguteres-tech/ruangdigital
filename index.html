@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Partner digital untuk website, aplikasi, game, hosting, VPS, dan maintenance dalam satu tempat."
+    />
+    <meta name="theme-color" content="#0b1020" />
+    <title>RuangDigital — Bangun. Tumbuh. Online.</title>
+    <link rel="stylesheet" href="style.css?v=7" />
+    <script src="script.js?v=7" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#beranda" aria-label="RuangDigital, ke beranda">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>ruang<span class="brand-accent">digital</span></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Buka menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+      <nav class="main-nav" aria-label="Navigasi utama">
+        <a href="#layanan">Layanan</a>
+        <a href="#harga">Harga</a>
+        <a href="#karya">Karya</a>
+        <a href="#maintenance">Maintenance</a>
+        <a href="#tentang">Tentang</a>
+      </nav>
+      <div class="header-actions">
+        <a class="login-link account-orders" href="#pesanan" hidden>Pesanan</a>
+        <a class="login-link admin-link" href="/admin" hidden>Dashboard admin</a>
+        <a class="login-link" href="#masuk" aria-label="Masuk ke akun">Masuk</a>
+        <button class="button button-small button-light" type="button" data-open-form>Mulai proyek <span aria-hidden="true">↗</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="beranda">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+          <source src="assets/intro.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-scrim"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-content page-width">
+          <div class="eyebrow"><span class="status-dot"></span> PARTNER DIGITAL BISNIS INDONESIA</div>
+          <h1>Ide hebat.<br /><span>Eksekusi digital.</span></h1>
+          <p class="hero-copy">Website, aplikasi, game, sampai server. Semua yang kamu butuhkan untuk membawa bisnis lebih jauh, ada di satu tempat.</p>
+          <div class="hero-actions">
+            <button class="button button-primary" type="button" data-open-form>Diskusikan proyek <span aria-hidden="true">↗</span></button>
+            <a class="button button-ghost" href="#layanan"><span class="play-icon" aria-hidden="true">↓</span> Jelajahi layanan</a>
+          </div>
+          <div class="hero-proof">
+            <div class="avatar-stack" aria-hidden="true"><span>R</span><span>A</span><span>D</span><span>+</span></div>
+            <p><strong>Satu partner dari ide ke launch</strong><br />dengan alur kerja yang transparan</p>
+          </div>
+        </div>
+        <div class="hero-caption"><span class="caption-line"></span> KARYA DIGITAL, DENGAN ARAH YANG JELAS</div>
+        <a class="scroll-cue" href="#layanan" aria-label="Gulir ke layanan"><span></span></a>
+      </section>
+
+      <section class="trust-strip" aria-label="Keunggulan RuangDigital">
+        <div class="page-width trust-inner">
+          <p>PARTNER TEKNOLOGI<br />UNTUK BERTUMBUH</p>
+          <div><strong>05</strong><small>Solusi digital</small></div>
+          <div><strong>01</strong><small>Partner terintegrasi</small></div>
+          <div><strong>360°</strong><small>Dukungan end-to-end</small></div>
+          <div class="trust-note"><span class="mini-check">✓</span> Pendampingan dari awal<br />hingga setelah launch</div>
+        </div>
+      </section>
+
+      <section class="section services-section" id="layanan">
+        <div class="page-width">
+          <div class="section-heading heading-row">
+            <div><span class="kicker">SOLUSI UNTUK SETIAP LANGKAH</span><h2>Satu partner,<br />banyak kemungkinan.</h2></div>
+            <p class="section-intro">Mulai dari validasi ide sampai infrastruktur yang siap berkembang. Pilih layanan, kami bantu wujudkan.</p>
+          </div>
+          <div class="service-grid">
+            <article class="service-card service-featured">
+              <div class="service-top"><span class="service-icon icon-web" aria-hidden="true">↗</span><span class="service-number">01 / BUILD</span></div>
+              <h3>Website</h3>
+              <p>Website bisnis yang cepat, responsif, dan dirancang untuk mengubah pengunjung jadi pelanggan.</p>
+              <div class="service-tags"><span>Company profile</span><span>E-commerce</span><span>Landing page</span></div>
+              <button class="text-link" type="button" data-open-form data-project="Website">Konsultasi proyek <span>↗</span></button>
+              <div class="card-orbit orbit-one"></div>
+            </article>
+            <article class="service-card">
+              <div class="service-top"><span class="service-icon icon-app" aria-hidden="true">▦</span><span class="service-number">02 / BUILD</span></div>
+              <h3>Aplikasi</h3>
+              <p>Aplikasi web dan mobile yang membantu tim bekerja lebih cerdas dan pelanggan lebih dekat.</p>
+              <div class="service-tags"><span>Web app</span><span>Mobile</span></div>
+              <button class="text-link" type="button" data-open-form data-project="Aplikasi">Konsultasi proyek <span>↗</span></button>
+            </article>
+            <article class="service-card">
+              <div class="service-top"><span class="service-icon icon-game" aria-hidden="true">✳</span><span class="service-number">03 / BUILD</span></div>
+              <h3>Game</h3>
+              <p>Dari prototipe sampai rilis, kami bantu membangun pengalaman bermain yang berkesan.</p>
+              <div class="service-tags"><span>Game development</span><span>Gamification</span></div>
+              <button class="text-link" type="button" data-open-form data-project="Game">Konsultasi proyek <span>↗</span></button>
+            </article>
+            <article class="service-card service-hosting">
+              <div class="service-top"><span class="service-icon icon-host" aria-hidden="true">⌁</span><span class="service-number">04 / HOST</span></div>
+              <h3>Web hosting</h3>
+              <p>Hosting stabil dengan SSL, backup rutin, dan bantuan teknis saat kamu membutuhkannya.</p>
+              <div class="service-tags"><span>SSL gratis</span><span>Backup harian</span></div>
+              <a class="text-link" href="#harga">Lihat paket hosting <span>↗</span></a>
+            </article>
+            <article class="service-card service-vps">
+              <div class="service-top"><span class="service-icon icon-vps" aria-hidden="true">⌘</span><span class="service-number">05 / SCALE</span></div>
+              <h3>VPS & cloud</h3>
+              <p>Resource dedicated dan konfigurasi fleksibel untuk aplikasi yang terus berkembang.</p>
+              <div class="service-tags"><span>NVMe SSD</span><span>Root access</span></div>
+              <a class="text-link" href="#harga">Lihat paket VPS <span>↗</span></a>
+            </article>
+          </div>
+          <div class="domain-check">
+            <div class="domain-icon" aria-hidden="true">◎</div>
+            <div class="domain-copy"><strong>Sudah punya nama domain?</strong><span>Cek ide domain impianmu sebelum mulai.</span></div>
+            <form class="domain-form" id="domain-form">
+              <label class="sr-only" for="domain-name">Nama domain yang ingin dicek</label>
+              <input id="domain-name" name="domain" placeholder="namabisnismu.com" autocomplete="url" required />
+              <button class="button button-dark" type="submit">Cek domain <span>↗</span></button>
+            </form>
+            <p class="domain-result" id="domain-result" aria-live="polite"></p>
+            <button class="text-link domain-request-button" id="domain-request-button" type="button" hidden>Ajukan pendaftaran domain <span>↗</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section pricing-section" id="harga">
+        <div class="page-width">
+          <div class="section-heading heading-row">
+            <div><span class="kicker">TRANSPARAN DARI AWAL</span><h2>Mulai dengan<br />paket yang pas.</h2></div>
+            <p class="section-intro">Paket server yang jelas, tanpa biaya tersembunyi. Butuh konfigurasi khusus? Tim kami siap bantu.</p>
+          </div>
+          <div class="pricing-label"><span class="pricing-dot"></span> HOSTING & VPS <span class="pricing-line"></span><span>Penagihan bulanan · bisa dibatalkan kapan saja</span></div>
+          <div class="pricing-grid">
+            <article class="price-card">
+              <div class="price-name">STARTER <span>UNTUK MULAI</span></div>
+              <h3>Hosting Basic</h3>
+              <p class="price-description">Untuk website pertama dan profil bisnis.</p>
+              <div class="price"><strong>Rp25.000</strong><span>/ bulan</span></div>
+              <a href="#kontak" class="button button-outline order-button" data-order="hosting-basic">Pilih paket <span>↗</span></a>
+              <ul class="feature-list"><li>1 website</li><li>10 GB NVMe storage</li><li>SSL & backup mingguan</li><li>Email bisnis</li></ul>
+            </article>
+            <article class="price-card price-popular">
+              <div class="popular-badge">PALING POPULER</div>
+              <div class="price-name">GROWTH <span>UNTUK BERTUMBUH</span></div>
+              <h3>Hosting Pro</h3>
+              <p class="price-description">Performa ekstra untuk toko online dan bisnis aktif.</p>
+              <div class="price"><strong>Rp75.000</strong><span>/ bulan</span></div>
+              <a href="#kontak" class="button button-primary order-button" data-order="hosting-pro">Pilih paket <span>↗</span></a>
+              <ul class="feature-list"><li>Hingga 10 website</li><li>50 GB NVMe storage</li><li>SSL & backup harian</li><li>Domain gratis 1 tahun*</li></ul>
+            </article>
+            <article class="price-card">
+              <div class="price-name">PERFORMA <span>UNTUK SKALA</span></div>
+              <h3>VPS Cloud</h3>
+              <p class="price-description">Resource dedicated untuk aplikasi dan trafik tinggi.</p>
+              <div class="price"><strong>Rp180.000</strong><span>/ bulan</span></div>
+              <a href="#kontak" class="button button-outline order-button" data-order="vps-cloud">Pilih paket <span>↗</span></a>
+              <ul class="feature-list"><li>2 vCPU · 4 GB RAM</li><li>80 GB NVMe storage</li><li>Root access & pilihan OS</li><li>Monitoring server</li></ul>
+            </article>
+          </div>
+          <p class="price-disclaimer">*Harga dan ketersediaan paket merupakan contoh. Konfigurasi akhir dikonfirmasi sebelum pemesanan.</p>
+        </div>
+      </section>
+
+      <section class="section work-section" id="karya">
+        <div class="page-width">
+          <div class="section-heading heading-row">
+            <div><span class="kicker">DIBANGUN BERSAMA KLIEN</span><h2>Ide yang jadi<br />nyata.</h2></div>
+            <p class="section-intro">Setiap proyek dimulai dengan memahami tujuan. Ini sekilas jenis solusi yang bisa kita bangun bersama.</p>
+          </div>
+          <div class="work-grid">
+            <article class="work-card work-large">
+              <div class="work-art art-commerce"><div class="mock-window"><div class="mock-bar"><i></i><i></i><i></i></div><div class="mock-content"><span>STUDIO<br />NUSA</span><div class="mock-product"></div></div></div><span class="art-label">01 / DIGITAL COMMERCE</span></div>
+              <div class="work-info"><div><h3>Pengalaman belanja yang lebih dekat</h3><p>E-commerce · UI/UX · Web development</p></div><span class="work-arrow">↗</span></div>
+            </article>
+            <article class="work-card">
+              <div class="work-art art-dashboard"><div class="dashboard-ui"><div class="dash-side"></div><div class="dash-main"><span></span><span></span><div class="dash-chart"></div></div></div><span class="art-label">02 / WEB APPLICATION</span></div>
+              <div class="work-info"><div><h3>Data bisnis dalam satu pandangan</h3><p>Dashboard · Web app · Automation</p></div><span class="work-arrow">↗</span></div>
+            </article>
+            <article class="work-card">
+              <div class="work-art art-game"><div class="game-sun"></div><div class="game-mountain"></div><span class="game-title">LEVEL<br />UP!</span><span class="art-label">03 / GAME EXPERIENCE</span></div>
+              <div class="work-info"><div><h3>Belajar sambil bermain</h3><p>Game · Gamification · Interactive</p></div><span class="work-arrow">↗</span></div>
+            </article>
+          </div>
+          <div class="testimonial">
+            <span class="quote-mark">“</span>
+            <blockquote>Ruang untuk pengalaman pelangganmu. Tambahkan testimoni asli setelah proyek selesai dan mendapat persetujuan klien.</blockquote>
+            <div class="testimonial-person"><span class="person-avatar">★</span><span><strong>Testimoni pelanggan</strong><small>Ganti dengan ulasan terverifikasi</small></span></div>
+            <div class="testimonial-rating"><span>ULASAN</span><small>Tambahkan rating terverifikasi</small></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section insights-section" id="artikel">
+        <div class="page-width">
+          <div class="section-heading heading-row">
+            <div><span class="kicker">CATATAN DARI RUANG DIGITAL</span><h2>Insight untuk<br />langkah berikutnya.</h2></div>
+            <p class="section-intro">Panduan ringkas seputar produk, infrastruktur, dan perawatan digital untuk membantu mengambil keputusan.</p>
+          </div>
+          <div class="article-grid">
+            <article class="article-card"><span class="article-category">PANDUAN · WEBSITE</span><h3>Checklist sebelum website bisnis diluncurkan</h3><p>Pastikan tampilan mobile, formulir, keamanan, performa, dan analitik sudah siap sebelum website dipublikasikan.</p><a class="text-link" href="#faq">Baca panduan <span>↗</span></a></article>
+            <article class="article-card"><span class="article-category">INFRASTRUKTUR · HOSTING</span><h3>Hosting atau VPS: mana yang kamu perlukan?</h3><p>Pahami perbedaan pengelolaan, fleksibilitas, dan kebutuhan teknis sebelum memilih server untuk bisnis.</p><a class="text-link" href="#harga">Lihat pilihan layanan <span>↗</span></a></article>
+            <article class="article-card"><span class="article-category">PERAWATAN · KEAMANAN</span><h3>Kenapa backup rutin penting untuk website?</h3><p>Backup terjadwal membantu proses pemulihan saat terjadi kesalahan, pembaruan gagal, atau insiden keamanan.</p><a class="text-link" href="#maintenance">Kenali maintenance <span>↗</span></a></article>
+          </div>
+          <div class="knowledge-box">
+            <div class="knowledge-icon" aria-hidden="true">⌕</div>
+            <div class="knowledge-copy"><strong>Butuh jawaban lebih spesifik?</strong><span>Cari topik di FAQ atau hubungi tim untuk konsultasi.</span></div>
+            <form class="knowledge-search" id="knowledge-search"><label class="sr-only" for="knowledge-query">Cari jawaban di FAQ</label><input id="knowledge-query" type="search" placeholder="Cari: pembayaran, maintenance..." /><button class="button button-dark" type="submit">Cari jawaban</button></form>
+            <span class="knowledge-result" id="knowledge-result" aria-live="polite"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="process-section">
+        <div class="page-width process-layout">
+          <div class="process-intro"><span class="kicker">JELAS DI SETIAP TAHAP</span><h2>Dari obrolan<br />jadi solusi.</h2><p>Proyek terkelola dengan transparan. Kamu tahu apa yang dikerjakan, apa tahap berikutnya, dan siapa yang bisa dihubungi.</p><button class="text-link" type="button" data-open-form>Ceritakan idemu <span>↗</span></button></div>
+          <div class="steps">
+            <article class="step"><span>01</span><div><h3>Diskusi kebutuhan</h3><p>Ceritakan tujuan, fitur, budget, dan target waktu. Gratis, tanpa komitmen.</p></div><span class="step-state">MULAI DI SINI</span></article>
+            <article class="step"><span>02</span><div><h3>Proposal & kesepakatan</h3><p>Terima estimasi ruang lingkup, biaya, timeline, serta tahapan pembayaran.</p></div></article>
+            <article class="step"><span>03</span><div><h3>Produksi & review</h3><p>Lihat progres tiap milestone dan berikan masukan selama pengerjaan.</p></div></article>
+            <article class="step"><span>04</span><div><h3>Launch & dukungan</h3><p>Serah terima yang rapi, dengan opsi maintenance setelah proyek selesai.</p></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section maintenance-section" id="maintenance">
+        <div class="page-width maintenance-panel">
+          <div class="maintenance-copy"><span class="kicker">SETELAH LAUNCH, KAMI TETAP ADA</span><h2>Website tetap prima.<br /><span>Kamu fokus bertumbuh.</span></h2><p>Update, backup, monitoring, dan perbaikan bug ditangani rutin oleh tim yang sudah mengenal proyekmu.</p><a class="button button-primary" href="#kontak" data-maintenance>Kenali paket maintenance <span>↗</span></a></div>
+          <div class="maintenance-list">
+            <div><span class="maintenance-check">✓</span><span><strong>Update & patch keamanan</strong><small>Pemeriksaan berkala, bukan menunggu masalah.</small></span></div>
+            <div><span class="maintenance-check">✓</span><span><strong>Backup & monitoring</strong><small>Pantau uptime, simpan backup terjadwal.</small></span></div>
+            <div><span class="maintenance-check">✓</span><span><strong>Perbaikan & laporan</strong><small>Riwayat pekerjaan dan laporan rutin.</small></span></div>
+            <div><span class="maintenance-check">✓</span><span><strong>Kontrak fleksibel</strong><small>Paket bulanan yang bisa diperpanjang.</small></span></div>
+          </div>
+          <div class="maintenance-glow"></div>
+        </div>
+      </section>
+
+      <section class="section about-section" id="tentang">
+        <div class="page-width about-grid">
+          <div><span class="kicker">TEKNOLOGI YANG TERASA MANUSIA</span><h2>Partner yang<br />ikut memikirkan.</h2></div>
+          <div class="about-copy"><p>Kami percaya solusi digital terbaik bukan yang paling rumit, tapi yang benar-benar membantu bisnis bergerak maju. RuangDigital menyatukan strategi, produk, dan infrastruktur dalam satu tim yang mudah diajak bicara.</p><a href="#faq" class="text-link">Kenali cara kerja kami <span>↗</span></a></div>
+        </div>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <div class="page-width faq-layout">
+          <div><span class="kicker">ADA YANG INGIN DITANYAKAN?</span><h2>Jawaban, tanpa<br />basa-basi.</h2><p>Belum menemukan yang kamu cari? <button type="button" class="inline-button" data-open-form>Hubungi tim kami.</button></p></div>
+          <div class="faq-list">
+            <details><summary>Bagaimana cara memulai proyek website atau aplikasi?<span></span></summary><p>Isi formulir konsultasi dengan gambaran proyek, fitur, budget, dan target waktu. Tim kami akan menghubungi untuk diskusi dan menyiapkan proposal. Konsultasi awal gratis.</p></details>
+            <details><summary>Apakah saya bisa melihat progres pengerjaan?<span></span></summary><p>Ya. Setiap proyek memiliki tahapan dan milestone yang disepakati bersama. Update progres dan review dilakukan secara berkala.</p></details>
+            <details><summary>Apakah paket hosting dan VPS langsung aktif?<span></span></summary><p>Status pembayaran diproses melalui Midtrans setelah checkout dikonfigurasi. Setelah pembayaran berhasil, detail ketersediaan dan aktivasi layanan dikonfirmasi oleh tim.</p></details>
+            <details><summary>Apa yang termasuk dalam maintenance?<span></span></summary><p>Paket dapat mencakup update software, backup terjadwal, monitoring uptime, pemeriksaan keamanan, perbaikan bug, serta laporan bulanan sesuai lingkup yang disepakati.</p></details>
+            <details><summary>Metode pembayaran apa saja yang tersedia?<span></span></summary><p>Metode pembayaran final akan diinformasikan saat penawaran. Pembayaran otomatis seperti QRIS, virtual account, dan e-wallet memerlukan integrasi payment gateway.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section" id="kontak">
+        <div class="page-width cta-inner"><span class="kicker">LANGKAH PERTAMA DIMULAI DARI SINI</span><h2>Punya ide yang ingin<br /><span>segera diwujudkan?</span></h2><p>Ceritakan kebutuhanmu. Kita cari solusi yang paling masuk akal bersama.</p><button class="button button-primary" type="button" data-open-form>Mulai konsultasi gratis <span>↗</span></button><span class="cta-orbit"></span></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-width footer-main">
+        <div class="footer-brand-col"><a class="brand" href="#beranda"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>ruang<span class="brand-accent">digital</span></span></a><p>Teknologi yang membantu<br />bisnis bergerak maju.</p></div>
+        <div class="footer-col"><strong>LAYANAN</strong><a href="#layanan">Website & aplikasi</a><a href="#layanan">Game development</a><a href="#harga">Hosting & VPS</a><a href="#maintenance">Maintenance</a></div>
+        <div class="footer-col"><strong>JELAJAHI</strong><a href="#karya">Portofolio</a><a href="#tentang">Tentang kami</a><a href="#faq">FAQ</a><a href="#kontak">Kontak</a></div>
+        <div class="footer-contact"><strong>ADA IDE?</strong><p>Mulai dengan obrolan singkat.</p><button type="button" class="footer-cta" data-open-form>Konsultasi gratis <span>↗</span></button><small>Respon pada hari kerja</small></div>
+      </div>
+      <div class="page-width footer-bottom"><span>© 2026 RuangDigital. Dibuat untuk bertumbuh.</span>      <div><a href="terms.html">Ketentuan layanan</a><a href="privacy.html">Kebijakan privasi</a></div><span class="footer-location"><i></i> Melayani seluruh Indonesia</span></div>
+    </footer>
+
+    <button class="floating-consult" type="button" data-open-form aria-label="Buka formulir konsultasi">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-11.2 6.5L4 19l1-4.1A7.5 7.5 0 1 1 20 11.5Z" /></svg>
+      <span>Konsultasi</span>
+    </button>
+
+    <dialog class="project-dialog auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+      <header class="auth-header">
+        <a class="brand auth-brand" href="#beranda" aria-label="RuangDigital, ke beranda" data-auth-home>
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>ruang<span class="brand-accent">digital</span></span>
+        </a>
+        <span class="auth-header-caption">RUANG UNTUK IDE BESAR</span>
+        <button class="auth-close" type="button" aria-label="Tutup halaman akun">×</button>
+      </header>
+      <div class="auth-layout">
+        <section class="auth-welcome" aria-label="Tentang RuangDigital">
+          <span class="auth-eyebrow"><i></i> PARTNER DIGITAL BISNIS INDONESIA</span>
+          <h1>Teknologi untuk<br /><span>langkah berikutnya.</span></h1>
+          <p>Bangun website, aplikasi, dan game. Jalankan layananmu di hosting atau VPS yang siap berkembang.</p>
+          <div class="auth-benefits">
+            <div><span class="benefit-icon">↗</span><strong>Solusi digital<br />terintegrasi</strong></div>
+            <div><span class="benefit-icon">⌘</span><strong>Proses jelas<br />dan terukur</strong></div>
+            <div><span class="benefit-icon">＋</span><strong>Dukungan<br />setelah launch</strong></div>
+          </div>
+          <a class="auth-explore" href="#layanan" data-auth-home>Jelajahi layanan <span>↗</span></a>
+          <div class="auth-server-art" aria-hidden="true">
+            <div class="server-orbit orbit-a"></div><div class="server-orbit orbit-b"></div>
+            <div class="server-stack"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="server-floor"></div>
+            <span class="server-code code-a">01 / CLOUD INFRASTRUCTURE</span><span class="server-code code-b">SECURE · RELIABLE · READY</span>
+          </div>
+          <span class="auth-side-note">MEMBANGUN YANG BERARTI, BERSAMA</span>
+        </section>
+        <section class="auth-panel" aria-label="Akses akun">
+          <div class="auth-card">
+            <div class="auth-tabs" role="tablist" aria-label="Jenis akses akun">
+              <button class="auth-tab active" type="button" role="tab" aria-selected="true" data-auth-mode="login"><span aria-hidden="true">↪</span> Masuk</button>
+              <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-mode="register"><span aria-hidden="true">＋</span> Daftar</button>
+            </div>
+            <div class="auth-card-heading">
+              <div class="auth-emblem" aria-hidden="true"><span>r</span><i></i></div>
+              <h2 id="auth-title">Selamat datang kembali!</h2>
+              <p id="auth-description">Masuk ke akunmu untuk melanjutkan.</p>
+            </div>
+            <form id="auth-form">
+              <label id="auth-name-field" class="auth-field" hidden><span class="auth-field-icon" aria-hidden="true">♙</span><input id="auth-name" name="name" autocomplete="name" placeholder="Nama lengkap" /></label>
+              <label class="auth-field"><span class="auth-field-icon" aria-hidden="true">✉</span><input id="auth-email" name="email" type="email" autocomplete="email" placeholder="Email" required /></label>
+              <label class="auth-field"><span class="auth-field-icon" aria-hidden="true">⌑</span><input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="Kata sandi" minlength="8" required /><button class="password-toggle" type="button" data-password-toggle="auth-password" aria-label="Tampilkan kata sandi">◉</button></label>
+              <label id="auth-confirm-field" class="auth-field" hidden><span class="auth-field-icon" aria-hidden="true">⌑</span><input id="auth-confirm" name="confirmPassword" type="password" autocomplete="new-password" placeholder="Ulangi kata sandi" minlength="8" /><button class="password-toggle" type="button" data-password-toggle="auth-confirm" aria-label="Tampilkan konfirmasi kata sandi">◉</button></label>
+              <div class="auth-options"><label class="remember-option"><input id="remember-me" type="checkbox" /> Ingat saya</label><button class="auth-forgot" id="forgot-password" type="button">Lupa kata sandi?</button></div>
+              <button class="button button-primary auth-submit" id="auth-submit" type="submit">Masuk sekarang <span aria-hidden="true">→</span></button>
+              <p class="auth-demo-note">Akun dilindungi kata sandi terenkripsi dan sesi aman.</p>
+            </form>
+            <button class="auth-forgot resend-verification" id="resend-verification" type="button" hidden>Kirim ulang tautan verifikasi</button>
+            <form id="password-reset-request" hidden>
+              <label class="auth-field"><span class="auth-field-icon" aria-hidden="true">✉</span><input id="reset-request-email" type="email" autocomplete="email" placeholder="Email akun" required /></label>
+              <button class="button button-primary auth-submit" type="submit">Kirim tautan reset <span aria-hidden="true">→</span></button>
+              <p class="auth-demo-note" id="reset-request-note">Tautan reset akan dikirim ke email jika akun ditemukan.</p>
+              <button class="auth-forgot reset-back" type="button">Kembali ke masuk</button>
+            </form>
+            <form id="password-reset-form" hidden>
+              <label class="auth-field"><span class="auth-field-icon" aria-hidden="true">⌑</span><input id="reset-new-password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Kata sandi baru" required /></label>
+              <label class="auth-field"><span class="auth-field-icon" aria-hidden="true">⌑</span><input id="reset-confirm-password" type="password" minlength="8" maxlength="128" autocomplete="new-password" placeholder="Ulangi kata sandi baru" required /></label>
+              <button class="button button-primary auth-submit" type="submit">Simpan kata sandi <span aria-hidden="true">→</span></button>
+              <p class="auth-demo-note" id="reset-password-note"></p>
+            </form>
+            <div class="auth-switch"><span id="auth-switch-copy">Belum punya akun?</span> <button type="button" data-auth-mode="register" id="auth-switch-button">Daftar sekarang <span>↗</span></button></div>
+          </div>
+        </section>
+      </div>
+    </dialog>
+    <dialog class="project-dialog orders-dialog" id="orders-dialog" aria-labelledby="orders-title">
+      <button class="dialog-close orders-close" type="button" aria-label="Tutup pesanan">×</button>
+      <div class="dialog-heading"><span class="kicker">AKUN / PESANAN</span><h2 id="orders-title">Pesanan kamu.</h2><p>Status pembayaran paket akan diperbarui setelah konfirmasi Midtrans.</p></div>
+      <div id="my-orders-list" class="my-orders-list" aria-live="polite"></div>
+    </dialog>
+
+    <dialog class="project-dialog" id="project-dialog" aria-labelledby="dialog-title">
+      <button class="dialog-close" type="button" aria-label="Tutup formulir">×</button>
+      <div class="dialog-heading"><span class="kicker">KONSULTASI GRATIS</span><h2 id="dialog-title">Ceritakan idemu.</h2><p>Isi beberapa detail, tim kami akan menghubungi untuk diskusi berikutnya.</p></div>
+      <form id="project-form">
+        <label class="form-trap" aria-hidden="true">Jangan isi kolom ini<input name="website" tabindex="-1" autocomplete="off" /></label>
+        <div class="form-row"><label>Nama kamu<input name="name" placeholder="Nama lengkap" required /></label><label>Email atau WhatsApp<input name="contact" placeholder="email@bisnis.com / 08..." required /></label></div>
+        <div class="form-row"><label>Jenis kebutuhan<select name="project" id="project-type" required><option value="">Pilih layanan</option><option>Website</option><option>Aplikasi</option><option>Game</option><option>Hosting</option><option>VPS</option><option>Maintenance</option></select></label><label>Estimasi budget<select name="budget"><option>Belum ditentukan</option><option>Di bawah Rp5 juta</option><option>Rp5–15 juta</option><option>Rp15–50 juta</option><option>Di atas Rp50 juta</option></select></label></div>
+        <label>Gambaran singkat proyek<textarea name="details" rows="3" placeholder="Tujuan, fitur utama, atau deadline yang diharapkan..."></textarea></label>
+        <div class="estimate-box"><span>ESTIMASI AWAL — BUKAN PENAWARAN</span><strong id="estimate-value">Pilih layanan untuk melihat perkiraan</strong><small>Harga akhir ditentukan setelah diskusi kebutuhan.</small></div>
+        <button class="button button-primary dialog-submit" type="submit">Kirim permintaan <span>↗</span></button>
+        <p class="form-note">Permintaan akan tersimpan di akun dan diteruskan ke tim RuangDigital.</p>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

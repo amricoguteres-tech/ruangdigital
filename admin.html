@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#102b56" />
+    <title>Dashboard Admin — RuangDigital</title>
+    <link rel="stylesheet" href="style.css?v=6" />
+    <link rel="stylesheet" href="admin.css?v=2" />
+    <script src="admin.js?v=2" defer></script>
+  </head>
+  <body class="admin-page">
+    <header class="admin-header">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span>ruang<span class="brand-accent">digital</span></span></a>
+      <div class="admin-header-actions"><span id="admin-identity">Memuat akun…</span><button class="button button-small button-light" id="admin-logout" type="button">Keluar</button></div>
+    </header>
+    <main class="admin-main">
+      <div class="admin-title"><div><span class="kicker">RUANGDIGITAL / ADMIN</span><h1>Ringkasan bisnis</h1><p>Kelola permintaan konsultasi dan pantau pembayaran paket.</p></div><div class="admin-title-actions"><button class="button button-outline" id="admin-backup" type="button">Backup database</button><button class="button button-dark" id="admin-refresh" type="button">Muat ulang <span>↻</span></button></div></div>
+      <p class="admin-alert" id="admin-alert" role="status" aria-live="polite"></p>
+      <section class="admin-stats" aria-label="Ringkasan">
+        <article><span>PERMINTAAN BARU</span><strong id="stat-consultations">—</strong></article>
+        <article><span>PEMBAYARAN MENUNGGU</span><strong id="stat-pending">—</strong></article>
+        <article><span>PEMBAYARAN BERHASIL</span><strong id="stat-paid">—</strong></article>
+      </section>
+      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">LEAD / KONSULTASI</span><h2>Permintaan terbaru</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Kontak</th><th>Kebutuhan</th><th>Budget</th><th>Pesan</th><th>Status</th><th>Diterima</th></tr></thead><tbody id="consultation-rows"><tr><td colspan="6">Memuat data…</td></tr></tbody></table></div></section>
+      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">ORDER / MIDTRANS</span><h2>Pesanan paket</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Pelanggan</th><th>Paket / invoice</th><th>Jumlah</th><th>Pembayaran</th><th>Layanan</th><th>Tindakan</th></tr></thead><tbody id="order-rows"><tr><td colspan="6">Memuat data…</td></tr></tbody></table></div></section>
+      <p class="admin-footnote">Status pembayaran diperbarui melalui notifikasi server Midtrans yang tervalidasi. Jangan tandai pembayaran berhasil secara manual.</p>
+    </main>
+  </body>
+</html>
