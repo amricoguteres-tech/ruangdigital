@@ -550,7 +550,7 @@ button { cursor: pointer; }
 .auth-card { position: relative; z-index: 1; width: min(100%, 430px); padding: 25px 27px 22px; border: 1px solid rgba(47,133,227,.38); border-radius: 13px; background: linear-gradient(145deg, rgba(8,27,54,.96), rgba(5,18,38,.98)); box-shadow: 0 0 42px rgba(0,117,255,.09), inset 0 1px rgba(139,194,255,.08); }
 .auth-card::before { position: absolute; top: -1px; left: 22%; width: 56%; height: 2px; background: linear-gradient(90deg, transparent, #25c1ff, transparent); box-shadow: 0 0 13px #168cff; content: ""; }
 .auth-card .auth-tabs { margin: 0 0 24px; padding: 3px; border: 1px solid rgba(88,142,207,.24); border-radius: 8px; background: rgba(4,15,32,.65); }
-.auth-card .auth-tab { min-height: 39px; color: #9eb4d1; font-size: 11px; }
+.auth-card .auth-tab { min-height: 44px; color: #9eb4d1; font-size: 11px; }
 .auth-card .auth-tab span { margin-right: 6px; font-size: 14px; }
 .auth-card .auth-tab.active { color: white; background: linear-gradient(100deg, #087ce4, #124dd6); box-shadow: 0 0 18px rgba(0,116,255,.27), inset 0 1px rgba(255,255,255,.2); }
 .auth-card-heading { margin: 0 0 21px; text-align: center; }
@@ -576,8 +576,9 @@ button { cursor: pointer; }
 .auth-submit:hover { background: linear-gradient(100deg, #18bbff, #2367ff); }
 .auth-demo-note { margin: 0; color: #7187a4; font-size: 8px; line-height: 1.55; text-align: center; }
 .auth-switch { margin-top: 18px; padding-top: 15px; border-top: 1px solid rgba(97,139,190,.18); color: #b1c3db; font-size: 9px; text-align: center; }
-.auth-switch button { margin-left: 4px; padding: 0; border: 0; color: #2bbcff; background: none; font-size: inherit; font-weight: 700; }
+.auth-switch button { display: inline-flex; min-height: 44px; align-items: center; margin-left: 4px; padding: 8px 10px; border: 0; border-radius: 6px; color: #2bbcff; background: none; font-size: inherit; font-weight: 700; }
 .auth-switch button span { padding-left: 4px; font-size: 13px; }
+.auth-card .auth-tab:focus-visible, .auth-switch button:focus-visible { outline: 2px solid #88e0ff; outline-offset: 2px; }
 .auth-dialog [hidden] { display: none !important; }
 
 @media (max-width: 800px) {
