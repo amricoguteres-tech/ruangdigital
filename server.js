@@ -299,6 +299,9 @@ function configuredMailer() {
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === "true",
     auth: { user: SMTP_USER, pass: SMTP_PASS },
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
     disableFileAccess: true,
     disableUrlAccess: true,
   });
@@ -306,7 +309,47 @@ function configuredMailer() {
 }
 
 function mailConfigured() {
+  if (process.env.RESEND_API_KEY || process.env.RESEND_FROM) {
+    return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM);
+  }
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.SMTP_FROM);
+}
+
+async function sendEmail({ recipient, subject, text }) {
+  if (process.env.RESEND_API_KEY || process.env.RESEND_FROM) {
+    if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM) {
+      throw new Error("RESEND_API_KEY and RESEND_FROM must both be configured.");
+    }
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        from: process.env.RESEND_FROM,
+        to: [recipient],
+        subject,
+        text,
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok) {
+      throw new Error(`Resend API request failed (${response.status}): ${result?.message || response.statusText}`);
+    }
+    return;
+  }
+
+  const mailer = configuredMailer();
+  if (!mailer) throw new Error("Email delivery is not configured.");
+  await mailer.sendMail({
+    from: process.env.SMTP_FROM,
+    to: recipient,
+    subject,
+    text,
+  });
 }
 
 function encryptEmailText(text) {
@@ -336,8 +379,6 @@ function queueEmail(recipient, subject, text) {
 
 async function drainEmailOutbox() {
   if (drainingOutbox || !mailConfigured()) return;
-  const mailer = configuredMailer();
-  if (!mailer) return;
   drainingOutbox = true;
   try {
     const messages = db.prepare(`
@@ -350,9 +391,8 @@ async function drainEmailOutbox() {
       const claimed = db.prepare("UPDATE email_outbox SET status = 'sending' WHERE id = ? AND status = 'pending'").run(message.id);
       if (!claimed.changes) continue;
       try {
-        await mailer.sendMail({
-          from: process.env.SMTP_FROM,
-          to: message.recipient,
+        await sendEmail({
+          recipient: message.recipient,
           subject: message.subject,
           text: decryptEmailText(message.encrypted_text),
         });
@@ -1140,7 +1180,7 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: "Terjadi kesalahan server. Coba lagi nanti." });
 });
 
-export { app, closeDatabase, createDatabaseBackup, drainEmailOutbox, mailPreview, seedAdministrator };
+export { app, closeDatabase, createDatabaseBackup, drainEmailOutbox, mailPreview, seedAdministrator, sendEmail };
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {

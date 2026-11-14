@@ -27,6 +27,8 @@ delete process.env.SMTP_HOST;
 delete process.env.SMTP_USER;
 delete process.env.SMTP_PASS;
 delete process.env.SMTP_FROM;
+delete process.env.RESEND_API_KEY;
+delete process.env.RESEND_FROM;
 
 let app;
 let db;
@@ -35,6 +37,59 @@ let customer;
 let admin;
 let mailPreview;
 let userId;
+
+test("Resend email delivery uses its HTTPS API", async () => {
+  const server = await import("../server.js");
+  const originalFetch = globalThis.fetch;
+  const request = {};
+  process.env.RESEND_API_KEY = "re_test_api_key";
+  process.env.RESEND_FROM = "RuangDigital <verified@example.com>";
+  globalThis.fetch = async (url, options) => {
+    request.url = url;
+    request.options = options;
+    return new Response(JSON.stringify({ id: "email_test_id" }), { status: 200 });
+  };
+
+  try {
+    await server.sendEmail({
+      recipient: "customer@example.com",
+      subject: "Reset kata sandi RuangDigital",
+      text: "Reset link",
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.RESEND_API_KEY;
+    delete process.env.RESEND_FROM;
+  }
+
+  assert.equal(request.url, "https://api.resend.com/emails");
+  assert.equal(request.options.headers.authorization, "Bearer re_test_api_key");
+  assert.deepEqual(JSON.parse(request.options.body), {
+    from: "RuangDigital <verified@example.com>",
+    to: ["customer@example.com"],
+    subject: "Reset kata sandi RuangDigital",
+    text: "Reset link",
+  });
+});
+
+test("Resend email delivery surfaces provider errors", async () => {
+  const server = await import("../server.js");
+  const originalFetch = globalThis.fetch;
+  process.env.RESEND_API_KEY = "re_test_api_key";
+  process.env.RESEND_FROM = "RuangDigital <verified@example.com>";
+  globalThis.fetch = async () => new Response(JSON.stringify({ message: "Invalid sender" }), { status: 422 });
+
+  try {
+    await assert.rejects(
+      server.sendEmail({ recipient: "customer@example.com", subject: "Test", text: "Test" }),
+      /Resend API request failed \(422\): Invalid sender/,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+    delete process.env.RESEND_API_KEY;
+    delete process.env.RESEND_FROM;
+  }
+});
 
 async function mutate(agent, method, url, body, clientIp) {
   const { body: csrf } = await agent.get("/api/csrf");
