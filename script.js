@@ -3,8 +3,6 @@ const authDialog = document.querySelector("#auth-dialog");
 const projectType = document.querySelector("#project-type");
 const estimateValue = document.querySelector("#estimate-value");
 const toast = document.querySelector("#toast");
-const menuToggle = document.querySelector(".menu-toggle");
-const mainNav = document.querySelector(".main-nav");
 const loginLink = document.querySelector('.login-link[href="#masuk"]');
 const accountOrdersLink = document.querySelector(".account-orders");
 const adminLink = document.querySelector(".admin-link");
@@ -321,19 +319,6 @@ document.querySelector("#domain-form").addEventListener("submit", async (event) 
   } catch (error) {
     result.textContent = error.message;
   }
-});
-
-menuToggle.addEventListener("click", () => {
-  const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
-  menuToggle.setAttribute("aria-expanded", String(!isExpanded));
-  mainNav.classList.toggle("open", !isExpanded);
-});
-
-mainNav.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => {
-    menuToggle.setAttribute("aria-expanded", "false");
-    mainNav.classList.remove("open");
-  });
 });
 
 loginLink.addEventListener("click", async (event) => {
