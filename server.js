@@ -17,7 +17,7 @@ import { closeDatabase, databasePath, db } from "./database.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isProduction = process.env.NODE_ENV === "production";
 const sessionSecret = process.env.SESSION_SECRET || "local-development-session-secret-change-me";
-const publicBaseUrl = process.env.PUBLIC_BASE_URL || "http://localhost:8000";
+const publicBaseUrl = process.env.PUBLIC_BASE_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:8000";
 const accessDataKeyring = loadAccessDataKeyring(process.env, isProduction);
 const sessionLifetime = 8 * 60 * 60 * 1000;
 const rememberLifetime = 30 * 24 * 60 * 60 * 1000;
