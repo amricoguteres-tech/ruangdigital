@@ -1,6 +1,7 @@
 const alertBox = document.querySelector("#admin-alert");
 const consultationRows = document.querySelector("#consultation-rows");
 const orderRows = document.querySelector("#order-rows");
+const adminRefreshButton = document.querySelector("#admin-refresh");
 
 async function api(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
@@ -26,9 +27,10 @@ async function api(path, options = {}) {
   return data;
 }
 
-function cell(content, className = "") {
+function cell(content, className = "", label = "") {
   const element = document.createElement("td");
   if (className) element.className = className;
+  if (label) element.dataset.label = label;
   element.textContent = content;
   return element;
 }
@@ -50,7 +52,17 @@ function formatAmount(value) {
 }
 
 async function loadDashboard() {
-  alertBox.textContent = "";
+  alertBox.textContent = "Memuat data dashboard...";
+  document.querySelector("#stat-consultations").textContent = "Memuat...";
+  document.querySelector("#stat-pending").textContent = "Memuat...";
+  document.querySelector("#stat-paid").textContent = "Memuat...";
+  emptyRow(consultationRows, 6, "Memuat permintaan konsultasi...");
+  emptyRow(orderRows, 6, "Memuat pesanan paket...");
+  if (adminRefreshButton) {
+    adminRefreshButton.disabled = true;
+    adminRefreshButton.setAttribute("aria-busy", "true");
+  }
+
   try {
     const [summary, consultations, orders] = await Promise.all([
       api("/api/admin/summary"),
@@ -62,16 +74,27 @@ async function loadDashboard() {
     document.querySelector("#stat-paid").textContent = summary.paidOrders;
     renderConsultations(consultations.consultations);
     renderOrders(orders.orders);
+    alertBox.textContent = "";
   } catch (error) {
-    alertBox.textContent = error.message;
+    alertBox.textContent = `Data dashboard gagal dimuat. ${error.message}`;
+    document.querySelector("#stat-consultations").textContent = "Tidak tersedia";
+    document.querySelector("#stat-pending").textContent = "Tidak tersedia";
+    document.querySelector("#stat-paid").textContent = "Tidak tersedia";
+    emptyRow(consultationRows, 6, "Permintaan gagal dimuat. Pilih Muat ulang untuk mencoba lagi.");
+    emptyRow(orderRows, 6, "Pesanan gagal dimuat. Pilih Muat ulang untuk mencoba lagi.");
     if (error.message.includes("masuk") || error.message.includes("administrator")) {
       window.location.assign("/");
+    }
+  } finally {
+    if (adminRefreshButton) {
+      adminRefreshButton.disabled = false;
+      adminRefreshButton.removeAttribute("aria-busy");
     }
   }
 }
 
 function renderConsultations(items) {
-  if (!items.length) return emptyRow(consultationRows, 6, "Belum ada permintaan konsultasi.");
+  if (!items.length) return emptyRow(consultationRows, 6, "Belum ada permintaan. Data tampil setelah formulir konsultasi dikirim.");
   const rows = items.map((item) => {
     const row = document.createElement("tr");
     const contact = document.createElement("td");
@@ -79,8 +102,9 @@ function renderConsultations(items) {
     name.textContent = item.name;
     const email = document.createElement("small");
     email.textContent = `${item.contact} · akun ${item.accountEmail}`;
+    contact.dataset.label = "Kontak";
     contact.append(name, email);
-    row.append(contact, cell(item.project), cell(item.budget), cell(item.details || "—"), cell(""));
+    row.append(contact, cell(item.project, "", "Kebutuhan"), cell(item.budget, "", "Budget"), cell(item.details || "Tidak ada pesan", "", "Pesan"), cell("", "", "Status"));
     const statusCell = row.lastElementChild;
     const status = document.createElement("select");
     status.setAttribute("aria-label", `Status permintaan ${item.name}`);
@@ -106,14 +130,14 @@ function renderConsultations(items) {
       }
     });
     statusCell.append(status);
-    row.append(cell(formatDate(item.createdAt)));
+    row.append(cell(formatDate(item.createdAt), "", "Diterima"));
     return row;
   });
   consultationRows.replaceChildren(...rows);
 }
 
 function renderOrders(items) {
-  if (!items.length) return emptyRow(orderRows, 6, "Belum ada pesanan paket.");
+  if (!items.length) return emptyRow(orderRows, 6, "Belum ada pesanan. Data tampil setelah checkout dibuat.");
   const rows = items.map((item) => {
     const row = document.createElement("tr");
     const customer = document.createElement("td");
@@ -121,13 +145,16 @@ function renderOrders(items) {
     name.textContent = item.customerName;
     const email = document.createElement("small");
     email.textContent = item.customerEmail;
+    customer.dataset.label = "Pelanggan";
     customer.append(name, email);
     const statusCell = document.createElement("td");
+    statusCell.dataset.label = "Pembayaran";
     const status = document.createElement("span");
     status.className = `admin-status ${item.paymentStatus}`;
     status.textContent = item.paymentStatus;
     statusCell.append(status);
     const serviceCell = document.createElement("td");
+    serviceCell.dataset.label = "Layanan";
     const serviceStatus = document.createElement("span");
     serviceStatus.className = `admin-status ${item.serviceStatus}`;
     serviceStatus.textContent = serviceStatusLabel(item.serviceStatus);
@@ -140,6 +167,7 @@ function renderOrders(items) {
     }
     const actions = document.createElement("td");
     actions.className = "admin-order-actions";
+    actions.dataset.label = "Tindakan";
     if (item.paymentStatus === "paid" && item.serviceStatus === "awaiting_activation") {
       actions.append(serviceActionButton(item, "processing", "Proses"));
     } else if (item.paymentStatus === "paid" && item.serviceStatus === "processing") {
@@ -152,11 +180,12 @@ function renderOrders(items) {
     }
     actions.append(serviceHistory(item));
     const packageCell = document.createElement("td");
+    packageCell.dataset.label = "Paket / invoice";
     packageCell.textContent = item.packageName;
     const invoice = document.createElement("small");
     invoice.textContent = item.invoiceNumber || item.id;
     packageCell.append(invoice);
-    row.append(customer, packageCell, cell(formatAmount(item.amount)), statusCell, serviceCell, actions);
+    row.append(customer, packageCell, cell(formatAmount(item.amount), "", "Jumlah"), statusCell, serviceCell, actions);
     return row;
   });
   orderRows.replaceChildren(...rows);
@@ -301,7 +330,6 @@ function serviceHistory(order) {
   return disclosure;
 }
 
-const adminRefreshButton = document.querySelector("#admin-refresh");
 const adminLogoutButton = document.querySelector("#admin-logout");
 const adminBackupButton = document.querySelector("#admin-backup");
 

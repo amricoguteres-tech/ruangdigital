@@ -6,16 +6,12 @@ const toast = document.querySelector("#toast");
 const loginLink = document.querySelector('.login-link[href="#masuk"]');
 const accountOrdersLink = document.querySelector(".account-orders");
 const adminLink = document.querySelector(".admin-link");
-const authForm = document.querySelector("#auth-form");
 const projectForm = document.querySelector("#project-form");
 const ordersDialog = document.querySelector("#orders-dialog");
 const myOrdersList = document.querySelector("#my-orders-list");
-const passwordResetRequest = document.querySelector("#password-reset-request");
-const passwordResetForm = document.querySelector("#password-reset-form");
-const resendVerificationButton = document.querySelector("#resend-verification");
+const heroVideo = document.querySelector(".hero-video");
 let toastTimer;
 let pendingAction = null;
-let authMode = "login";
 let activeUser = null;
 
 let csrfToken;
@@ -35,6 +31,23 @@ function showToast(message) {
   window.clearTimeout(toastTimer);
   toastTimer = window.setTimeout(() => toast.classList.remove("show"), 4200);
 }
+
+function openAuthDialog(mode = "login") {
+  if (!authDialog.open) authDialog.showModal();
+  window.dispatchEvent(new CustomEvent("ruangdigital:auth-mode", { detail: mode }));
+}
+
+window.addEventListener("ruangdigital:toast", (event) => showToast(event.detail));
+window.addEventListener("ruangdigital:auth-success", (event) => {
+  activeUser = event.detail;
+  updateAccountLink();
+  const action = pendingAction;
+  pendingAction = null;
+  Promise.resolve().then(() => action?.()).catch((error) => showToast(error.message));
+});
+window.addEventListener("ruangdigital:auth-registered", () => {
+  pendingAction = null;
+});
 
 async function api(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
@@ -74,36 +87,6 @@ function updateAccountLink() {
   adminLink.hidden = user?.role !== "admin";
 }
 
-function setAuthMode(mode) {
-  showAuthForm(authForm);
-  authMode = mode;
-  const isRegister = mode === "register";
-  document.querySelector("#auth-title").textContent = isRegister ? "Buat akun baru" : "Selamat datang kembali!";
-  document.querySelector("#auth-description").textContent = isRegister
-    ? "Daftar untuk menyimpan dan melanjutkan pesananmu."
-    : "Masuk ke akunmu untuk melanjutkan.";
-  document.querySelector("#auth-name-field").hidden = !isRegister;
-  document.querySelector("#auth-name").required = isRegister;
-  document.querySelector("#auth-name").autocomplete = isRegister ? "name" : "off";
-  document.querySelector("#auth-confirm-field").hidden = !isRegister;
-  document.querySelector("#auth-confirm").required = isRegister;
-  document.querySelector("#auth-password").autocomplete = isRegister ? "new-password" : "current-password";
-  document.querySelector("#auth-submit").innerHTML = isRegister
-    ? 'Daftar sekarang <span aria-hidden="true">→</span>'
-    : 'Masuk sekarang <span aria-hidden="true">→</span>';
-  document.querySelector("#auth-switch-copy").textContent = isRegister ? "Sudah punya akun?" : "Belum punya akun?";
-  document.querySelector("#auth-switch-button").innerHTML = isRegister
-    ? 'Masuk sekarang <span>↗</span>'
-    : 'Daftar sekarang <span>↗</span>';
-  document.querySelector("#auth-switch-button").dataset.authMode = isRegister ? "login" : "register";
-  document.querySelector("#forgot-password").hidden = isRegister;
-  document.querySelectorAll("[data-auth-mode]").forEach((tab) => {
-    const active = tab.dataset.authMode === mode;
-    tab.classList.toggle("active", active);
-    if (tab.getAttribute("role") === "tab") tab.setAttribute("aria-selected", String(active));
-  });
-}
-
 async function requireLogin(action) {
   await sessionReady;
   if (getUser()) {
@@ -111,8 +94,7 @@ async function requireLogin(action) {
     return;
   }
   pendingAction = action;
-  setAuthMode("login");
-  authDialog.showModal();
+  openAuthDialog("login");
 }
 
 function openProjectForm(type = "") {
@@ -132,6 +114,25 @@ function updateEstimate() {
   estimateValue.textContent = estimates[projectType.value] || "Pilih layanan untuk melihat perkiraan";
 }
 
+if (heroVideo) {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const syncHeroVideo = () => {
+    if (reducedMotion.matches || document.hidden) {
+      heroVideo.pause();
+      return;
+    }
+    if (heroVideo.paused) {
+      heroVideo.play().catch((error) => {
+        console.warn("Hero video could not start automatically.", error);
+      });
+    }
+  };
+
+  syncHeroVideo();
+  document.addEventListener("visibilitychange", syncHeroVideo);
+  reducedMotion.addEventListener("change", syncHeroVideo);
+}
+
 updateAccountLink();
 const sessionReady = api("/api/auth/me")
   .then(({ user }) => {
@@ -143,24 +144,45 @@ const sessionReady = api("/api/auth/me")
     updateAccountLink();
   });
 
-const revealTargets = document.querySelectorAll(
-  ".section-heading, .service-card, .domain-check, .price-card, .work-card, .testimonial, .article-card, .knowledge-box, .process-intro, .step, .maintenance-copy, .maintenance-list > div, .about-grid > *, .faq-layout > *, .cta-inner, .footer-main > *",
-);
-
-if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.14, rootMargin: "0px 0px -35px 0px" });
-
-  revealTargets.forEach((element, index) => {
-    element.classList.add("reveal-on-scroll");
-    element.style.setProperty("--reveal-delay", `${(index % 3) * 90}ms`);
-    revealObserver.observe(element);
+const scrollProgress = document.querySelector(".scroll-progress");
+const siteHeader = document.querySelector(".site-header");
+const sectionLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
+const sectionTargets = sectionLinks
+  .map((link) => document.querySelector(link.getAttribute("href")))
+  .filter(Boolean);
+let scrollUpdatePending = false;
+function updateActiveNavigation() {
+  const marker = Math.min(window.innerHeight * 0.32, 240);
+  const activeSection = sectionTargets
+    .filter((section) => section.getBoundingClientRect().top <= marker)
+    .at(-1);
+  if (!activeSection) return;
+  sectionLinks.forEach((link) => {
+    if (link.getAttribute("href") === `#${activeSection.id}`) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
   });
+}
+
+function updateScrollChrome() {
+  const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+  document.documentElement.style.setProperty("--scroll-progress", String(progress));
+  siteHeader?.classList.toggle("is-scrolled", window.scrollY > 12);
+  updateActiveNavigation();
+  scrollUpdatePending = false;
+}
+
+if (scrollProgress && siteHeader) {
+  updateScrollChrome();
+  window.addEventListener("scroll", () => {
+    if (scrollUpdatePending) return;
+    scrollUpdatePending = true;
+    window.requestAnimationFrame(updateScrollChrome);
+  }, { passive: true });
+  window.addEventListener("resize", updateScrollChrome, { passive: true });
 }
 
 document.querySelectorAll("[data-open-form]").forEach((button) => {
@@ -170,11 +192,18 @@ document.querySelectorAll("[data-open-form]").forEach((button) => {
   });
 });
 
-document.querySelectorAll("[data-auth-mode]").forEach((tab) => {
-  tab.addEventListener("click", () => setAuthMode(tab.dataset.authMode));
+document.querySelector(".auth-close").addEventListener("click", () => {
+  pendingAction = null;
+  authDialog.close();
 });
 
-document.querySelector(".auth-close").addEventListener("click", () => {
+authDialog.addEventListener("cancel", () => {
+  pendingAction = null;
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !authDialog.open) return;
+  event.preventDefault();
   pendingAction = null;
   authDialog.close();
 });
@@ -183,55 +212,6 @@ authDialog.addEventListener("click", (event) => {
   if (event.target === authDialog) {
     pendingAction = null;
     authDialog.close();
-  }
-});
-
-authForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!authForm.reportValidity()) return;
-
-  const email = document.querySelector("#auth-email").value.trim().toLowerCase();
-  const password = document.querySelector("#auth-password").value;
-  if (authMode === "register" && password !== document.querySelector("#auth-confirm").value) {
-    document.querySelector("#auth-confirm").setCustomValidity("Konfirmasi kata sandi tidak sama.");
-    document.querySelector("#auth-confirm").reportValidity();
-    document.querySelector("#auth-confirm").setCustomValidity("");
-    return;
-  }
-  const body = {
-    email,
-    password,
-    remember: document.querySelector("#remember-me").checked,
-  };
-  if (authMode === "register") body.name = document.querySelector("#auth-name").value.trim();
-  const submitButton = document.querySelector("#auth-submit");
-  submitButton.disabled = true;
-  try {
-    const endpoint = authMode === "register" ? "/api/auth/register" : "/api/auth/login";
-    const result = await api(endpoint, { method: "POST", body: JSON.stringify(body) });
-    if (authMode === "register") {
-      pendingAction = null;
-      authForm.reset();
-      setAuthMode("login");
-      authDialog.close();
-      showToast(result.message);
-      return;
-    }
-    const { user } = result;
-    activeUser = user;
-    updateAccountLink();
-    const action = pendingAction;
-    pendingAction = null;
-    authForm.reset();
-    setAuthMode("login");
-    authDialog.close();
-    showToast(`Berhasil masuk sebagai ${user.name}.`);
-    await action?.();
-  } catch (error) {
-    showToast(error.message);
-    resendVerificationButton.hidden = !error.message.includes("EMAIL_NOT_VERIFIED");
-  } finally {
-    submitButton.disabled = false;
   }
 });
 
@@ -311,7 +291,7 @@ document.querySelector("#domain-form").addEventListener("submit", async (event) 
   requestButton.hidden = true;
   try {
     const data = await api("/api/domain/check", { method: "POST", body: JSON.stringify({ domain }) });
-    result.textContent = `${data.domain} — ${data.message}`;
+    result.textContent = `${data.domain}: ${data.message}`;
     if (data.status === "possibly_available") {
       requestButton.hidden = false;
       requestButton.dataset.domain = data.domain;
@@ -338,8 +318,7 @@ loginLink.addEventListener("click", async (event) => {
     return;
   }
   pendingAction = null;
-  setAuthMode("login");
-  authDialog.showModal();
+  openAuthDialog("login");
 });
 
 document.querySelectorAll("[data-auth-home]").forEach((link) => {
@@ -349,70 +328,6 @@ document.querySelectorAll("[data-auth-home]").forEach((link) => {
   });
 });
 
-document.querySelectorAll("[data-password-toggle]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const field = document.getElementById(button.dataset.passwordToggle);
-    const showPassword = field.type === "password";
-    field.type = showPassword ? "text" : "password";
-    button.setAttribute("aria-label", showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi");
-    button.classList.toggle("visible", showPassword);
-  });
-});
-
-document.querySelector("#auth-confirm").addEventListener("input", (event) => {
-  event.currentTarget.setCustomValidity("");
-});
-
-function showAuthForm(formToShow) {
-  document.querySelector(".auth-tabs").hidden = formToShow !== authForm;
-  authForm.hidden = formToShow !== authForm;
-  passwordResetRequest.hidden = formToShow !== passwordResetRequest;
-  passwordResetForm.hidden = formToShow !== passwordResetForm;
-  document.querySelector(".auth-switch").hidden = formToShow !== authForm;
-}
-
-document.querySelector("#forgot-password").addEventListener("click", () => {
-  resendVerificationButton.hidden = true;
-  showAuthForm(passwordResetRequest);
-  document.querySelector("#reset-request-email").value = document.querySelector("#auth-email").value;
-});
-
-document.querySelector(".reset-back").addEventListener("click", () => showAuthForm(authForm));
-
-passwordResetRequest.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const email = document.querySelector("#reset-request-email").value.trim().toLowerCase();
-  const note = document.querySelector("#reset-request-note");
-  try {
-    const data = await api("/api/auth/password/forgot", { method: "POST", body: JSON.stringify({ email }) });
-    note.textContent = data.message;
-  } catch (error) {
-    note.textContent = error.message;
-  }
-});
-
-passwordResetForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const token = new URLSearchParams(location.search).get("reset_token");
-  const password = document.querySelector("#reset-new-password").value;
-  const confirm = document.querySelector("#reset-confirm-password").value;
-  const note = document.querySelector("#reset-password-note");
-  if (password !== confirm) {
-    note.textContent = "Konfirmasi kata sandi tidak sama.";
-    return;
-  }
-  try {
-    const data = await api("/api/auth/password/reset", {
-      method: "POST",
-      body: JSON.stringify({ token, password }),
-    });
-    note.textContent = data.message;
-    passwordResetForm.reset();
-    showAuthForm(authForm);
-  } catch (error) {
-    note.textContent = error.message;
-  }
-});
 
 accountOrdersLink.addEventListener("click", async (event) => {
   event.preventDefault();
@@ -441,7 +356,7 @@ accountOrdersLink.addEventListener("click", async (event) => {
         expired: "kedaluwarsa",
         cancelled: "dibatalkan",
       };
-      status.textContent = `Pembayaran: ${order.paymentStatus} · Layanan: ${serviceLabels[order.serviceStatus] || order.serviceStatus}`;
+      status.textContent = `Pembayaran: ${order.paymentStatus} | Layanan: ${serviceLabels[order.serviceStatus] || order.serviceStatus}`;
       item.append(name, amount, status);
       if (order.serviceDetails) {
         const access = document.createElement("div");
@@ -452,13 +367,13 @@ accountOrdersLink.addEventListener("click", async (event) => {
         for (const [label, value] of [
           ["Host / IP", order.serviceDetails.host],
           ["Username", order.serviceDetails.username],
-          ["Port", order.serviceDetails.port || "—"],
-          ["Catatan", order.serviceDetails.notes || "—"],
+          ["Port", order.serviceDetails.port || "-"],
+          ["Catatan", order.serviceDetails.notes || "-"],
           ["Mulai", order.serviceDetails.startedAt],
           ["Berakhir", order.expiresAt],
         ]) {
           const line = document.createElement("span");
-          line.textContent = `${label}: ${value || "—"}`;
+          line.textContent = `${label}: ${value || "-"}`;
           access.append(line);
         }
         item.append(access);
@@ -491,30 +406,6 @@ ordersDialog.addEventListener("click", (event) => {
   if (event.target === ordersDialog) ordersDialog.close();
 });
 
-const resetToken = new URLSearchParams(location.search).get("reset_token");
-if (resetToken) {
-  history.replaceState(null, "", location.pathname);
-  setAuthMode("login");
-  showAuthForm(passwordResetForm);
-  authDialog.showModal();
-}
-
-resendVerificationButton.addEventListener("click", async () => {
-  const email = document.querySelector("#auth-email").value.trim().toLowerCase();
-  if (!email) {
-    showToast("Isi email akun terlebih dahulu.");
-    document.querySelector("#auth-email").focus();
-    return;
-  }
-  try {
-    const result = await api("/api/auth/email/resend", { method: "POST", body: JSON.stringify({ email }) });
-    showToast(result.message);
-    resendVerificationButton.hidden = true;
-  } catch (error) {
-    showToast(error.message);
-  }
-});
-
 document.querySelector("#domain-request-button").addEventListener("click", () => {
   const domain = document.querySelector("#domain-request-button").dataset.domain;
   requireLogin(() => {
@@ -522,19 +413,6 @@ document.querySelector("#domain-request-button").addEventListener("click", () =>
     document.querySelector('[name="details"]').value = `Saya ingin dibantu mendaftarkan domain ${domain}. Mohon konfirmasi harga dan ketersediaan registrar.`;
   });
 });
-
-const verificationToken = new URLSearchParams(location.search).get("verify_email");
-if (verificationToken) {
-  history.replaceState(null, "", location.pathname);
-  api("/api/auth/email/verify", {
-    method: "POST",
-    body: JSON.stringify({ token: verificationToken }),
-  }).then(({ message }) => {
-    showToast(message);
-  }).catch((error) => {
-    showToast(error.message);
-  });
-}
 
 const csrfReady = fetch("/api/csrf", { credentials: "same-origin", cache: "no-store" })
   .then((response) => response.ok ? response.json() : Promise.reject(new Error("CSRF initialization failed")))
@@ -553,6 +431,10 @@ document.querySelector("#knowledge-search").addEventListener("submit", (event) =
   const result = document.querySelector("#knowledge-result");
 
   if (!query) {
+    entries.forEach((entry) => {
+      entry.hidden = false;
+      entry.open = false;
+    });
     result.textContent = "Masukkan kata kunci untuk mencari.";
     return;
   }
@@ -560,7 +442,7 @@ document.querySelector("#knowledge-search").addEventListener("submit", (event) =
   const matches = entries.filter((entry) => {
     const matched = entry.textContent.toLowerCase().includes(query);
     entry.hidden = !matched;
-    if (matched) entry.open = true;
+    entry.open = matched;
     return matched;
   });
 

@@ -1171,6 +1171,7 @@ app.get(["/privacy.html", "/terms.html", "/style.css", "/script.js", "/admin.css
   if (!allowedFiles.has(fileName)) return next();
   res.sendFile(path.join(__dirname, fileName));
 });
+app.use("/ui", express.static(path.join(__dirname, "dist"), { ...staticOptions, maxAge: 0 }));
 app.use("/assets", express.static(path.join(__dirname, "assets"), staticOptions));
 app.use("/api", (_req, res) => res.status(404).json({ error: "Endpoint tidak ditemukan." }));
 

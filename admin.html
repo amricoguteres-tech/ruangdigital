@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#102b56" />
-    <title>Dashboard Admin — RuangDigital</title>
-    <link rel="stylesheet" href="style.css?v=6" />
-    <link rel="stylesheet" href="admin.css?v=3" />
-    <script src="admin.js?v=3" defer></script>
+    <meta name="theme-color" content="#1b2d3b" />
+    <title>Dashboard Admin | RuangDigital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css?v=24" />
+    <link rel="stylesheet" href="admin.css?v=7" />
+    <script src="admin.js?v=4" defer></script>
   </head>
   <body class="admin-page">
     <header class="admin-header">
@@ -18,12 +21,12 @@
       <div class="admin-title"><div><span class="kicker">RUANGDIGITAL / ADMIN</span><h1>Ringkasan bisnis</h1><p>Kelola permintaan konsultasi dan pantau pembayaran paket.</p></div><div class="admin-title-actions"><button class="button button-outline" id="admin-backup" type="button">Backup database</button><button class="button button-dark" id="admin-refresh" type="button">Muat ulang <span>↻</span></button></div></div>
       <p class="admin-alert" id="admin-alert" role="status" aria-live="polite"></p>
       <section class="admin-stats" aria-label="Ringkasan">
-        <article><span>PERMINTAAN BARU</span><strong id="stat-consultations">—</strong></article>
-        <article><span>PEMBAYARAN MENUNGGU</span><strong id="stat-pending">—</strong></article>
-        <article><span>PEMBAYARAN BERHASIL</span><strong id="stat-paid">—</strong></article>
+        <article><span>PERMINTAAN BARU</span><strong id="stat-consultations"><span class="admin-loading">Memuat...</span></strong></article>
+        <article><span>PEMBAYARAN MENUNGGU</span><strong id="stat-pending"><span class="admin-loading">Memuat...</span></strong></article>
+        <article><span>PEMBAYARAN BERHASIL</span><strong id="stat-paid"><span class="admin-loading">Memuat...</span></strong></article>
       </section>
-      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">LEAD / KONSULTASI</span><h2>Permintaan terbaru</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Kontak</th><th>Kebutuhan</th><th>Budget</th><th>Pesan</th><th>Status</th><th>Diterima</th></tr></thead><tbody id="consultation-rows"><tr><td colspan="6">Memuat data…</td></tr></tbody></table></div></section>
-      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">ORDER / MIDTRANS</span><h2>Pesanan paket</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Pelanggan</th><th>Paket / invoice</th><th>Jumlah</th><th>Pembayaran</th><th>Layanan</th><th>Tindakan</th></tr></thead><tbody id="order-rows"><tr><td colspan="6">Memuat data…</td></tr></tbody></table></div></section>
+      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">LEAD / KONSULTASI</span><h2>Permintaan terbaru</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Kontak</th><th>Kebutuhan</th><th>Budget</th><th>Pesan</th><th>Status</th><th>Diterima</th></tr></thead><tbody id="consultation-rows"><tr><td class="admin-empty" colspan="6">Memuat permintaan konsultasi...</td></tr></tbody></table></div></section>
+      <section class="admin-section"><div class="admin-section-title"><div><span class="kicker">ORDER / MIDTRANS</span><h2>Pesanan paket</h2></div></div><div class="admin-table-wrap"><table><thead><tr><th>Pelanggan</th><th>Paket / invoice</th><th>Jumlah</th><th>Pembayaran</th><th>Layanan</th><th>Tindakan</th></tr></thead><tbody id="order-rows"><tr><td class="admin-empty" colspan="6">Memuat pesanan paket...</td></tr></tbody></table></div></section>
       <p class="admin-footnote">Status pembayaran diperbarui melalui notifikasi server Midtrans yang tervalidasi. Jangan tandai pembayaran berhasil secara manual.</p>
     </main>
   </body>

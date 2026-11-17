@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: ruangdigital-app
+    runtime: node
+    region: singapore
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run build:auth-ui
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    disk:
+      name: ruangdigital-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /data/ruangdigital.sqlite
+      - key: BACKUP_DIR
+        value: /data/backups
+      - key: ACCESS_DATA_KEY_VERSION
+        value: v1
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ACCESS_DATA_KEY
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
