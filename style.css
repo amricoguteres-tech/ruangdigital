@@ -169,6 +169,9 @@ img, video { display: block; max-width: 100%; }
 .domain-form .button { white-space: nowrap; }
 .domain-form input { width: 100%; min-width: 0; min-height: 46px; padding: 0 13px; border: 1px solid #b2c2bd; border-radius: 7px; color: var(--ink); background: var(--white); }
 .domain-result { grid-column: 2; min-height: 0; margin-top: -18px; color: #e1e9e6; font-size: 12px; }
+.static-pages-notice { margin: 12px 0 0; padding: 12px 14px; border: 1px solid rgba(220, 231, 226, .48); border-radius: 8px; color: var(--ink-soft); background: rgba(252, 251, 247, .82); font-size: 13px; line-height: 1.65; }
+.domain-static-notice { grid-column: 2; margin: 0; }
+.cta-inner .static-pages-notice { max-width: 650px; margin-inline: auto; color: var(--ink); }
 .domain-request-button { grid-column: 2; justify-self: start; color: #d3e2dc; }
 .domain-request-button:hover { color: white; }
 
@@ -413,6 +416,7 @@ img, video { display: block; max-width: 100%; }
 }
 @media (max-width: 690px) {
   #site-ambient { opacity: .42; }
+  .domain-static-notice { grid-column: 1; }
   html { scroll-padding-top: 78px; }
   body { padding-bottom: 64px; }
   .page-width { width: calc(100% - 36px); }

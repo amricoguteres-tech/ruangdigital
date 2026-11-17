@@ -10,6 +10,7 @@ const projectForm = document.querySelector("#project-form");
 const ordersDialog = document.querySelector("#orders-dialog");
 const myOrdersList = document.querySelector("#my-orders-list");
 const heroVideo = document.querySelector(".hero-video");
+const isGitHubPages = window.location.hostname.endsWith(".github.io");
 let toastTimer;
 let pendingAction = null;
 let activeUser = null;
@@ -133,49 +134,53 @@ if (heroVideo) {
   reducedMotion.addEventListener("change", syncHeroVideo);
 }
 
-updateAccountLink();
-const sessionReady = api("/api/auth/me")
-  .then(({ user }) => {
-    activeUser = user;
-    updateAccountLink();
-  })
-  .catch(() => {
-    activeUser = null;
-    updateAccountLink();
+function initializeStaticPreview() {
+  document.documentElement.classList.add("github-pages-preview");
+  document.querySelectorAll("[data-open-form], [data-order], [data-maintenance], .domain-form").forEach((control) => {
+    control.hidden = true;
   });
-
-const scrollProgress = document.querySelector(".scroll-progress");
-const siteHeader = document.querySelector(".site-header");
-const sectionLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
-const sectionTargets = sectionLinks
-  .map((link) => document.querySelector(link.getAttribute("href")))
-  .filter(Boolean);
-let scrollUpdatePending = false;
-function updateActiveNavigation() {
-  const marker = Math.min(window.innerHeight * 0.32, 240);
-  const activeSection = sectionTargets
-    .filter((section) => section.getBoundingClientRect().top <= marker)
-    .at(-1);
-  if (!activeSection) return;
-  sectionLinks.forEach((link) => {
-    if (link.getAttribute("href") === `#${activeSection.id}`) {
-      link.setAttribute("aria-current", "location");
-    } else {
-      link.removeAttribute("aria-current");
-    }
+  document.querySelectorAll(".login-link, .domain-result, #domain-request-button, #auth-dialog, #orders-dialog, #project-dialog, .footer-contact").forEach((element) => {
+    element.hidden = true;
+  });
+  document.querySelectorAll(".static-pages-notice").forEach((notice) => {
+    notice.hidden = false;
   });
 }
 
-function updateScrollChrome() {
-  const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
-  document.documentElement.style.setProperty("--scroll-progress", String(progress));
-  siteHeader?.classList.toggle("is-scrolled", window.scrollY > 12);
-  updateActiveNavigation();
-  scrollUpdatePending = false;
-}
+function initializeScrollChrome() {
+  const scrollProgress = document.querySelector(".scroll-progress");
+  const siteHeader = document.querySelector(".site-header");
+  const sectionLinks = [...document.querySelectorAll('.main-nav a[href^="#"]')];
+  const sectionTargets = sectionLinks
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+  let scrollUpdatePending = false;
 
-if (scrollProgress && siteHeader) {
+  function updateActiveNavigation() {
+    const marker = Math.min(window.innerHeight * 0.32, 240);
+    const activeSection = sectionTargets
+      .filter((section) => section.getBoundingClientRect().top <= marker)
+      .at(-1);
+    if (!activeSection) return;
+    sectionLinks.forEach((link) => {
+      if (link.getAttribute("href") === `#${activeSection.id}`) {
+        link.setAttribute("aria-current", "location");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  function updateScrollChrome() {
+    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
+    document.documentElement.style.setProperty("--scroll-progress", String(progress));
+    siteHeader?.classList.toggle("is-scrolled", window.scrollY > 12);
+    updateActiveNavigation();
+    scrollUpdatePending = false;
+  }
+
+  if (!scrollProgress || !siteHeader) return;
   updateScrollChrome();
   window.addEventListener("scroll", () => {
     if (scrollUpdatePending) return;
@@ -184,6 +189,52 @@ if (scrollProgress && siteHeader) {
   }, { passive: true });
   window.addEventListener("resize", updateScrollChrome, { passive: true });
 }
+
+function initializeKnowledgeSearch() {
+  document.querySelector("#knowledge-search").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const query = document.querySelector("#knowledge-query").value.trim().toLowerCase();
+    const entries = [...document.querySelectorAll(".faq-list details")];
+    const result = document.querySelector("#knowledge-result");
+
+    if (!query) {
+      entries.forEach((entry) => {
+        entry.hidden = false;
+        entry.open = false;
+      });
+      result.textContent = "Masukkan kata kunci untuk mencari.";
+      return;
+    }
+
+    const matches = entries.filter((entry) => {
+      const matched = entry.textContent.toLowerCase().includes(query);
+      entry.hidden = !matched;
+      entry.open = matched;
+      return matched;
+    });
+
+    result.textContent = matches.length
+      ? `${matches.length} jawaban ditemukan di FAQ.`
+      : "Belum ada jawaban yang cocok. Hubungi tim untuk bantuan.";
+    document.querySelector("#faq").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+initializeScrollChrome();
+initializeKnowledgeSearch();
+
+if (isGitHubPages) initializeStaticPreview();
+
+updateAccountLink();
+const sessionReady = isGitHubPages ? Promise.resolve() : api("/api/auth/me")
+  .then(({ user }) => {
+    activeUser = user;
+    updateAccountLink();
+  })
+  .catch(() => {
+    activeUser = null;
+    updateAccountLink();
+  });
 
 document.querySelectorAll("[data-open-form]").forEach((button) => {
   button.addEventListener("click", () => {
@@ -414,7 +465,7 @@ document.querySelector("#domain-request-button").addEventListener("click", () =>
   });
 });
 
-const csrfReady = fetch("/api/csrf", { credentials: "same-origin", cache: "no-store" })
+const csrfReady = isGitHubPages ? Promise.resolve() : fetch("/api/csrf", { credentials: "same-origin", cache: "no-store" })
   .then((response) => response.ok ? response.json() : Promise.reject(new Error("CSRF initialization failed")))
   .then((result) => {
     csrfToken = result.token;
@@ -423,31 +474,3 @@ const csrfReady = fetch("/api/csrf", { credentials: "same-origin", cache: "no-st
     console.error("Could not initialize secure session", error);
     showToast("Gagal menyiapkan sesi aman. Muat ulang halaman sebelum melanjutkan.");
   });
-
-document.querySelector("#knowledge-search").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const query = document.querySelector("#knowledge-query").value.trim().toLowerCase();
-  const entries = [...document.querySelectorAll(".faq-list details")];
-  const result = document.querySelector("#knowledge-result");
-
-  if (!query) {
-    entries.forEach((entry) => {
-      entry.hidden = false;
-      entry.open = false;
-    });
-    result.textContent = "Masukkan kata kunci untuk mencari.";
-    return;
-  }
-
-  const matches = entries.filter((entry) => {
-    const matched = entry.textContent.toLowerCase().includes(query);
-    entry.hidden = !matched;
-    entry.open = matched;
-    return matched;
-  });
-
-  result.textContent = matches.length
-    ? `${matches.length} jawaban ditemukan di FAQ.`
-    : "Belum ada jawaban yang cocok. Hubungi tim untuk bantuan.";
-  document.querySelector("#faq").scrollIntoView({ behavior: "smooth", block: "start" });
-});

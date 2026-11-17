@@ -12,11 +12,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css?v=24" />
-    <link rel="stylesheet" href="/ui/auth-ui.css?v=2" />
-    <script src="script.js?v=15" defer></script>
-    <script type="module" src="/ui/auth-ui.js"></script>
-    <script type="module" src="/ui/experience.js?v=1"></script>
+    <link rel="stylesheet" href="style.css?v=25" />
+    <link rel="stylesheet" href="ui/auth-ui.css?v=2" />
+    <script src="script.js?v=16" defer></script>
+    <script type="module" src="ui/auth-ui.js"></script>
+    <script type="module" src="ui/experience.js?v=1"></script>
   </head>
   <body>
     <div class="scroll-progress" aria-hidden="true"><span></span></div>
@@ -141,6 +141,7 @@
           </div>
           <div class="domain-check">
             <div class="domain-copy"><strong>Cek ketersediaan domain</strong><span>Pemeriksaan memakai data RDAP; hasilnya bukan reservasi.</span></div>
+            <p class="static-pages-notice domain-static-notice" hidden role="status">Pengecekan domain memerlukan layanan backend dan belum tersedia pada versi GitHub Pages.</p>
             <form class="domain-form" id="domain-form">
               <label class="sr-only" for="domain-name">Nama domain yang ingin dicek</label>
               <input id="domain-name" name="domain" placeholder="namabisnismu.com" autocomplete="url" required />
@@ -267,7 +268,7 @@
       </section>
 
       <section class="cta-section" id="kontak">
-        <div class="page-width cta-inner"><span class="kicker">KONSULTASI AWAL TANPA BIAYA</span><h2>Ada pekerjaan<br /><span>digital yang perlu beres?</span></h2><p>Ceritakan kebutuhan dan batas waktumu. Kami bantu tentukan langkah pertama.</p><button class="button button-primary" type="button" data-open-form>Mulai konsultasi</button></div>
+        <div class="page-width cta-inner"><span class="kicker">KONSULTASI AWAL TANPA BIAYA</span><h2>Ada pekerjaan<br /><span>digital yang perlu beres?</span></h2><p>Ceritakan kebutuhan dan batas waktumu. Kami bantu tentukan langkah pertama.</p><button class="button button-primary" type="button" data-open-form>Mulai konsultasi</button><p class="static-pages-notice" hidden role="status">Ini versi tampilan statis di GitHub Pages. Login, formulir konsultasi, pengecekan domain, dan checkout memerlukan backend yang belum terhubung di sini.</p></div>
       </section>
     </main>
 

@@ -16,6 +16,10 @@ The account dialog is a React island styled to match the site. `npm start` build
 
 Run automated checks with `npm test`.
 
+## GitHub Pages preview
+
+The `master` branch deploys a static preview to GitHub Pages through `.github/workflows/pages.yml`. The preview keeps the public site, video, scroll animations, navigation, and FAQ search. It does not include the Node.js backend: account access, consultation submissions, domain availability checks, and package checkout are hidden or identified as unavailable. Use Render or another Node.js host for those features; do not enter secrets in GitHub Pages settings.
+
 ## Render deployment
 
 The root `render.yaml` is a Render Blueprint for the full Node.js app, not a static-site deployment. In Render, choose **New + Blueprint**, connect this GitHub repository, and select the `master` branch. The service uses a paid Starter instance because Render persistent disks are available on paid services; the 1 GB disk at `/data` keeps SQLite and database backups across deploys. Keep the service to one instance because the app uses SQLite.
